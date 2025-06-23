@@ -1,11 +1,11 @@
 const axios = require('axios');
 
 const meta = {
-  name: "aria",
-  version: "0.0.2",
+  name: "venice",
+  version: "0.0.1",
   aliases: [],
-  description: "Ask Aria AI anything",
-  author: "Hazeyy API",
+  description: "Ask Venice AI anything",
+  author: "ShawnDesu",
   prefix: "both",
   category: "ai",
   type: "anyone",
@@ -21,25 +21,24 @@ async function onStart({ bot, args, message, msg, usages }) {
     }
 
     const response = await axios.get(
-      `${global.api.hazeyy}/api/aria?q=${encodeURIComponent(question)}`
+      `${global.api.neko}/ai/veniceai?text=${encodeURIComponent(question)}`
     );
 
-    if (response.data && response.data.aria) {
-      // Replace any **word** with *word* for Telegram Markdown bold
-      const formatted = response.data.aria.replace(
+    if (response.data && response.data.status && response.data.result) {
+      const formatted = response.data.result.replace(
         /\*\*(.+?)\*\*/g,
         (_, content) => `*${content}*`
       );
       return message.reply(formatted, { parse_mode: "Markdown" });
     } else {
       return message.reply(
-        "Aria AI couldn't generate a response. Please try again later."
+        "Venice AI couldn't generate a response. Please try again later."
       );
     }
   } catch (error) {
     console.error(`[ ${meta.name} ] »`, error);
     return message.reply(
-      `[ ${meta.name} ] » An error occurred while connecting to Aria AI.`
+      `[ ${meta.name} ] » An error occurred while connecting to Venice AI.`
     );
   }
 }

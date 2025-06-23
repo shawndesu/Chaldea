@@ -41,9 +41,9 @@ async function onStart({ bot, msg }) {
 
   } catch (error) {
     console.log('Error in goodbye handler:', error);
-    if (global.config?.admin) {
+    if (global.settings?.admin) {
       await bot.sendMessage(
-        global.config.admin,
+        global.settings.admin,
         `Error in goodbye handler:\n${error.message}`
       );
     }

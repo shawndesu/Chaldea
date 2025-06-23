@@ -8,8 +8,16 @@ exports.listen = async function (bot) {
       const chatId = msg.chat.id;
       const userId = msg.from.id;
       const message = new Message(bot, msg);
-      const handlersPath = path.join(__dirname, 'handle');
 
+      // Only handle the message if it's a private chat or this bot is assigned to the group
+      if (msg.chat.type !== 'private') {
+        const assignedIndex = Math.abs(chatId) % bot.totalBots;
+        if (bot.index !== assignedIndex) {
+          return; // Not this bot's responsibility
+        }
+      }
+
+      const handlersPath = path.join(__dirname, 'handle');
       const files = fs.readdirSync(handlersPath);
       for (const file of files) {
         if (file.endsWith('.js')) {

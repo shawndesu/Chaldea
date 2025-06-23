@@ -26,8 +26,13 @@ const login = () => {
     process.exit(1);
   }
 
-  // Instantiate bots
-  const bots = tokens.map(token => new TelegramBot(token, { polling: true }));
+  // Instantiate bots with index and totalBots properties
+  const bots = tokens.map((token, index) => {
+    const bot = new TelegramBot(token, { polling: true });
+    bot.index = index;
+    bot.totalBots = tokens.length;
+    return bot;
+  });
 
   // Attach event listeners
   const { listen } = require('../listen.js');

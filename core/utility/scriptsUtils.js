@@ -73,8 +73,8 @@ async function scriptsUtils() {
   await cacheReady;
 
   const errors = {};
-  const commandsPath = path.join(process.cwd(), 'apps', 'scripts', 'commands');
-  const eventsPath = path.join(process.cwd(), 'apps', 'scripts', 'events');
+  const commandsPath = path.join(process.cwd(), 'apps', 'commands');
+  const eventsPath = path.join(process.cwd(), 'apps', 'events');
 
   const [commandErrors, eventErrors] = await Promise.all([
     loadDirectory(commandsPath, 'command', global.chaldea.commands),

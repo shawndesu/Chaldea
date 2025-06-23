@@ -28,7 +28,7 @@ async function onStart({ bot, msg }) {
         await bot.sendMessage(
           chatId,
           `🎉 ${botInfo.first_name} has been successfully connected!\n\n` +
-          `Thank you for inviting me to ${title}. To unlock my full range of features, ` +
+          `Thank you for inviting me to ${title}. Before you use this bot, ` +
           `please consider granting me admin privileges.`
         );
       }
@@ -51,9 +51,9 @@ async function onStart({ bot, msg }) {
 
   } catch (error) {
     console.log('Error in welcome handler:', error);
-    if (global.config?.admin) {
+    if (global.settings?.admin) {
       await bot.sendMessage(
-        global.config.admin,
+        global.settings.admin,
         `Error in welcome handler:\n${error.message}`
       );
     }
