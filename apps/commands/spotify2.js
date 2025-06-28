@@ -1,10 +1,10 @@
 const axios = require('axios');
 
 const meta = {
-  name: "spotify",
+  name: "spotify2",
   version: "0.0.1",
   aliases: [],
-  description: "Play a 30-second preview of a Spotify track",
+  description: "Play a music from Spotify",
   author: "ShawnDesu",
   prefix: "both",
   category: "music",

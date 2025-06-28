@@ -4,6 +4,7 @@ const path = require('path');
 // Command configuration
 const meta = {
   name: "vip",
+  aliases: [],
   version: "0.0.1",
   type: "anyone",
   category: "system",

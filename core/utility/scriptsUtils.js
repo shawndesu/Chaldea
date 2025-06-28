@@ -13,9 +13,10 @@ const cacheReady = (async () => {
 /**
  * Validates a module has required properties
  * @param {Object} module - The module to validate
+ * @param {string} moduleType - Type of the module ('command' or 'event')
  * @throws {Error} If module is invalid
  */
-function validateModule(module) {
+function validateModule(module, moduleType) {
   if (!module) {
     throw new Error('No export found in module');
   }
@@ -25,6 +26,18 @@ function validateModule(module) {
   if (!module.meta.name || typeof module.meta.name !== 'string') {
     throw new Error('Missing or invalid meta.name in module');
   }
+  if (moduleType === 'command' && module.meta.aliases) {
+    if (!Array.isArray(module.meta.aliases) || !module.meta.aliases.every(alias => typeof alias === 'string')) {
+      throw new Error('Invalid meta.aliases in command module');
+    }
+    const aliasesSet = new Set(module.meta.aliases);
+    if (aliasesSet.size !== module.meta.aliases.length) {
+      throw new Error('Duplicate aliases in command module');
+    }
+    if (aliasesSet.has(module.meta.name)) {
+      throw new Error('Command name is also an alias in module');
+    }
+  }
   if (!module.onStart) {
     throw new Error('Missing onStart method in module');
   }
@@ -33,12 +46,13 @@ function validateModule(module) {
 /**
  * Loads modules from a directory into a collection
  * @param {string} directory - Directory path to load from
- * @param {string} moduleType - Type of modules being loaded
+ * @param {string} moduleType - Type of modules being loaded ('command' or 'event')
  * @param {Map} collection - Collection to store loaded modules
  * @returns {Object} Object containing any errors encountered
  */
 async function loadDirectory(directory, moduleType, collection) {
   const errors = {};
+  const usedIdentifiers = new Set();
 
   try {
     const files = await fs.readdir(directory);
@@ -50,7 +64,22 @@ async function loadDirectory(directory, moduleType, collection) {
         const module = require(modulePath);
         const moduleExport = module.default || module;
 
-        validateModule(moduleExport);
+        validateModule(moduleExport, moduleType);
+
+        if (moduleType === 'command') {
+          const { name, aliases = [] } = moduleExport.meta;
+          if (usedIdentifiers.has(name)) {
+            throw new Error(`Duplicate command name "${name}"`);
+          }
+          for (const alias of aliases) {
+            if (usedIdentifiers.has(alias)) {
+              throw new Error(`Duplicate alias "${alias}" for command "${name}"`);
+            }
+          }
+          usedIdentifiers.add(name);
+          aliases.forEach(alias => usedIdentifiers.add(alias));
+        }
+
         collection.set(moduleExport.meta.name, moduleExport);
       } catch (error) {
         console.error(`Error loading ${moduleType} "${file}": ${error.message}`);

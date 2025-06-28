@@ -21,7 +21,7 @@ async function onStart({ bot, args, message, msg, usages }) {
     }
 
     const response = await axios.get(
-      `https://api.nekorinn.my.id/ai/grok-3?text=${encodeURIComponent(question)}`
+      `${global.api.neko}/ai/grok-3?text=${encodeURIComponent(question)}`
     );
 
     if (response.data && response.data.result) {
